@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.easygo.mapper.SpecificationMapper">
+
+    <select id="totalCount" resultType="integer">
+       select count(1) from tb_specification where del=0 and spec_name like #{spec_name}
+    </select>
+
+    <select id="getSpecificationPage" resultType="com.easygo.pojo.Specification">
+        select * from tb_specification where del=0 and spec_name like #{spec_name} limit #{pageStart},#{pageSize}
+    </select>
+
+    <!--MyBatis新增返回数据库的主键-->
+    <insert id="addSpecification" useGeneratedKeys="true" keyProperty="id">
+        insert into tb_specification values (null,#{spec_name},0)
+    </insert>
+
+    <select id="getSpecificationById" resultType="com.easygo.pojo.Specification">
+        select * from tb_specification where id=#{id}
+    </select>
+
+    <update id="updateSpecificationById">
+        update tb_specification set spec_name=#{spec_name} where id=#{id}
+    </update>
+
+    <select id="getSpecifications" resultType="com.easygo.pojo.Specification">
+         select * from tb_specification where del=0
+    </select>
+
+</mapper>

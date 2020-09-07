@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.easygo.mapper.AddressMapper">
+
+    <select id="getMyAddress" resultType="com.easygo.pojo.Address">
+        select * from tb_address where username=#{userName}
+    </select>
+
+    <select id="getMyDeafultAddress" resultType="com.easygo.pojo.Address">
+        select * from tb_address where username=#{userName} and is_default=1
+    </select>
+
+    <select id="getAddressById" resultType="com.easygo.pojo.Address">
+        select * from tb_address where id=#{id}
+    </select>
+
+
+</mapper>

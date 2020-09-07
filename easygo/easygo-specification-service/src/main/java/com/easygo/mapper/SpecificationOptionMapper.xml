@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.easygo.mapper.SpecificationOptionMapper">
+
+    <insert id="addSpecificationOption">
+        insert into tb_specification_option values (null,#{option_name},#{specification.id},#{orders},0)
+    </insert>
+
+    <select id="getSpecificationOptionsBySpecificationId" resultType="com.easygo.pojo.SpecificationOption">
+       select * from tb_specification_option where spec_id=#{specificationId}
+    </select>
+
+    <update id="updateSpecificationOption">
+        update tb_specification_option set option_name=#{option_name},orders=#{orders} where id=#{id}
+    </update>
+
+    <delete id="deleteSpecificationOptions">
+        delete from tb_specification_option where spec_id=#{spec_id}
+    </delete>
+
+</mapper>

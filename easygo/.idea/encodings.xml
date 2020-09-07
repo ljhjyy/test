@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/easygo-ad-service/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/easygo-address-service/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/easygo-admin-service/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/easygo-admin-web/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/easygo-admin-web/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/easygo-brand-service/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/easygo-commons/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/easygo-commons/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/easygo-eureka/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/easygo-eureka/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/easygo-goods-service/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/easygo-itemcat-service/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/easygo-order-service/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/easygo-pay-service/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/easygo-pay-service/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/easygo-pojo/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/easygo-pojo/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/easygo-protal-web/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/easygo-protal-web/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/easygo-search-service/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/easygo-search-service/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/easygo-specification-service/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/easygo-staticpage-service/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/easygo-staticpage-service/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/easygo-typetemplate-service/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/easygo-users-service/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/resources" charset="UTF-8" />
+  </component>
+</project>

@@ -1,0 +1,434 @@
+<!DOCTYPE>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+
+<head>
+    <!-- 页面meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>广告管理</title>
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
+    <link rel="stylesheet" href="../plugins/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../plugins/adminLTE/css/AdminLTE.css">
+    <link rel="stylesheet" href="../plugins/adminLTE/css/skins/_all-skins.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <script src="../plugins/jQuery/jquery-2.2.3.min.js"></script>
+    <script src="../plugins/bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript">
+
+        //修改状态
+        function updataStatus(id,btn) {
+            var status=0; //默认无效
+            var text=$(btn).text();
+            if(text=="有效"){
+                status=1;
+            }
+            if(confirm("确定要修改为:"+text+"吗?")){
+                //alert(text+"---"+status+"---"+id);
+                $.ajax({
+                    url:"content_updateStatus",
+                    type:"post",
+                    dataType:"json",
+                    data:"id="+id+"&status="+status,
+                    success:function(result){
+                        //alert(JSON.stringify(result));
+                        if(result.code==200){
+                            alert("状态修改成功！");
+                            //动态修改单元格的内容
+                            $(btn).parent().prev().text(text);
+                            //动态修改按钮上的文字
+                            $(btn).text(text=="有效"?"无效":"有效");
+                        }else{
+                            alert("状态修改失败！")
+                        }
+                    }
+                });
+            }
+        }
+
+        //异步绑定新增下拉框 contentCategory_add_select
+        $(function () {
+            $.ajax({
+                url:"contentCategory_list",
+                type:"post",
+                dataType:"json",
+                success:function (result) {
+                    for(var i=0;i<result.length;i++){
+                        $("#contentCategory_add_select").append("<option value='"+result[i].id+"'>"+result[i].name+"</option>");
+                    }
+                }
+            });
+        });
+
+        //异步文件上传
+        function uploadImg_add() {
+            //点击按钮，不是提交表单
+            //模拟一个表单对象
+            var formData=new FormData();
+            //向表单中新增一个文件上传框
+            formData.append("file",document.getElementById("file_add").files[0]);
+            //异步提交上面模拟的表单
+            $.ajax({
+                url:"file_upload", //后台准备一个文件上传的控制器
+                type:"post", //一定是post请求 文件上传是post
+                data:formData, //要提交的数据
+                contentType:false, //必须为false，文件上传的时候默认才会有正确 content-Type
+                processData:false, //必须为false，异步对象XMLhttpRequest才会对文件上传表单正确处理
+                success:function (result) {
+                    //alert(JSON.stringify(result));
+                    //页面回显上传成功的图片
+                    if(result.code==200){
+                        //回显图片
+                        $("#img_show_add").prop("src",result.message);
+                        //藏值，提交表单新增到数据库
+                        $("#upload_img_add_pic").val(result.message);
+                    }else{
+                        alert("文件上传失败，请联系运维....");
+                    }
+                }
+            });
+        }
+
+        //新增addContent
+        function addContent() {
+            var data=$("#addForm").serialize();
+            $.ajax({
+                url:"content_add",
+                data:data,
+                type:"post",
+                dataType:"json",
+                success:function (result) {
+                    //alert(JSON.stringify(result));
+                    if(result.code==200){
+                        alert(result.message);
+                        location.href="content_page";
+                    }else{
+                        alert(result.message);
+                    }
+                }
+            });
+        }
+
+        //跳转更新,查询数据回显
+        function goUpdate(id) {
+            $.ajax({
+                url:"content_goupdate",
+                data:{"id":id},
+                type:"post",
+                dataType:"json",
+                success:function (result) {
+                    alert(JSON.stringify(result));
+                    //回显普通框
+                    $("#title_update").val(result.content.title);
+                    $("#url_update").val(result.content.url);
+                    $("#sort_order_update").val(result.content.sort_order);
+                    $("#img_show_update").prop("src",result.content.pic);
+                    $("#status_update").prop("checked",result.content.status=="1"?true:false);
+                    //下拉框回显
+                    for(var i=0;i<result.contentCategorys.length;i++){
+                        $("#contentCategory_update_select").append("<option value='"+result.contentCategorys[i].id+"'>"+result.contentCategorys[i].name+"</option>");
+                    }
+                    //下拉框自动选中
+                    $("#contentCategory_update_select").val(result.content.contentCategory.id);
+                    //隐藏ID
+                    $("#id_update").val(result.content.id);
+                    //原来的图片路径(藏了一个原来图片的地址)
+                    $("#upload_img_update_pic").val(result.content.pic);
+                }
+            });
+        }
+
+        //更新图片
+        function uploadImg_update() {
+            //点击按钮，不是提交表单
+            //模拟一个表单对象
+            var formData=new FormData();
+            //向表单中新增一个文件上传框
+            formData.append("file",document.getElementById("file_update").files[0]);
+            //异步提交上面模拟的表单
+            $.ajax({
+                url:"file_upload", //后台准备一个文件上传的控制器
+                type:"post", //一定是post请求 文件上传是post
+                data:formData, //要提交的数据
+                contentType:false, //必须为false，文件上传的时候默认才会有正确 content-Type
+                processData:false, //必须为false，异步对象XMLhttpRequest才会对文件上传表单正确处理
+                success:function (result) {
+                    //alert(JSON.stringify(result));
+                    //页面回显上传成功的图片
+                    if(result.code==200){
+                        //回显图片
+                        $("#img_show_update").prop("src",result.message);
+                        //藏值(新的地址)，提交表单新增到数据库,万一用户没有点击更新图片？藏值还是原来的值！
+                        $("#upload_img_update_pic").val(result.message);
+                    }else{
+                        alert("文件上传失败，请联系运维....");
+                    }
+                }
+            });
+        }
+
+        //更新
+        function updateContent() {
+            var data=$("#updateForm").serialize();
+            $.ajax({
+                url:"content_update",
+                data:data,
+                type:"post",
+                dataType:"json",
+                success:function (result) {
+                    //alert(JSON.stringify(result));
+                    if(result.code==200){
+                        alert(result.message);
+                        location.href="content_page";
+                    }else{
+                        alert(result.message);
+                    }
+                }
+            });
+        }
+
+
+    </script>
+
+</head>
+
+<body class="hold-transition skin-red sidebar-mini">
+<!-- .box-body -->
+
+<div class="box-header with-border">
+    <h3 class="box-title">广告管理</h3>
+</div>
+
+<div class="box-body">
+    <!-- 数据表格 -->
+    <div class="table-box">
+
+        <!--工具栏-->
+        <div class="pull-left">
+            <div class="form-group form-inline">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-default" title="新建" data-toggle="modal" data-target="#addModal" ><i class="fa fa-file-o"></i> 新建</button>
+                    <button type="button" class="btn btn-default" title="删除" ><i class="fa fa-trash-o"></i> 删除</button>
+                    <button type="button" class="btn btn-default" title="开启" onclick='confirm("你确认要开启吗？")'><i class="fa fa-check"></i> 开启</button>
+                    <button type="button" class="btn btn-default" title="屏蔽" onclick='confirm("你确认要屏蔽吗？")'><i class="fa fa-ban"></i> 屏蔽</button>
+                    <button type="button" class="btn btn-default" title="刷新" onclick="window.location.reload();"><i class="fa fa-refresh"></i> 刷新</button>
+                </div>
+            </div>
+        </div>
+        <div class="box-tools pull-right">
+            <div class="has-feedback">
+
+            </div>
+        </div>
+        <!--工具栏/-->
+
+        <!--数据列表-->
+        <table id="dataList" class="table table-bordered table-striped table-hover dataTable">
+            <thead>
+            <tr>
+                <th class="" style="padding-right:0px">
+                    <input id="selall" type="checkbox" class="icheckbox_square-blue">
+                </th>
+                <th class="sorting_asc">广告ID</th>
+                <th class="sorting">分类名称</th>
+                <th class="sorting">标题</th>
+                <th class="sorting">URL</th>
+                <th class="sorting">图片</th>
+                <th class="sorting">排序</th>
+                <th class="sorting">是否有效</th>
+                <th class="text-center">操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="content:${pageUtils.records}">
+                <td><input  type="checkbox"></td>
+                <td th:text="${content.id}">1</td>
+                <td th:text="${content.contentCategory.name}">1</td>
+                <td th:text="${content.title}">促销海报1</td>
+                <td th:text="${content.url}">http://wwww.hb.com/hd1.html</td>
+                <td>
+                    <img alt="" th:src="${content.pic}" width="100px" height="50px">
+                </td>
+                <td th:text="${content.sort_order}">1</td>
+                <td th:text="${content.status=='1'?'有效':'无效'}">有效</td>
+                <td class="text-center">
+                    <button type="button" class="btn bg-olive btn-xs" data-toggle="modal" th:onclick="|goUpdate(${content.id});|" data-target="#editModal">修改</button>
+                    <button type="button" class="btn bg-red-gradient btn-xs" data-toggle="modal" th:onclick="|updataStatus(${content.id},this);|"  th:text="${content.status=='0'?'有效':'无效'}">无效</button>
+                    <button type="button" class="btn bg-red btn-xs" data-toggle="modal" th:onclick="|updataStatus(${content.id},this);|">删除</button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <!--数据列表/-->
+        <!-- 分页组件 -->
+        <div class="row">
+            <div class="col-sm-6"><div class="dataTables_paginate paging_bootstrap" id="sample-table_paginate">
+                <ul class="pagination">
+                    <li class="prev"><a th:href="|content_page?pageIndex=1&pageSize=${pageUtils.pageSize}|">首页</a></li>
+                    <!--<li class="prev" th:if="${pageUtils.pageIndex>1}"><a th:href="|brand_page?pageIndex=${pageUtils.pageIndex-1}&pageSize=${pageUtils.pageSize}|">上一页</a></li>-->
+
+                    <li class="next" th:each="num:${pageUtils.numbers}" th:class="${pageUtils.pageIndex==num}? active"><a th:href="|content_page?pageIndex=${num}&pageSize=${pageUtils.pageSize}|" th:text="${num}">XXX</a></li>
+
+                    <!--	<li class="next" th:if="${pageUtils.pageIndex<pageUtils.pageCount}"><a th:href="|brand_page?pageIndex=${pageUtils.pageIndex+1}&pageSize=${pageUtils.pageSize}|">下一页</a></li>-->
+                    <li class="next"><a th:href="|content_page?pageIndex=${pageUtils.pageCount}&pageSize=${pageUtils.pageSize}|">尾页</a></li>
+                    <li class="next"><a href="#" th:text="|当前${pageUtils.pageIndex}/${pageUtils.pageCount}页|"></a></li>
+                    <li class="next"><a href="#" th:text="|共${pageUtils.totalCount}条|">XXX</a></li>
+                </ul>
+            </div>
+            </div>
+        </div>
+        <!-- 分页组件 -->
+    </div>
+    <!-- 数据表格 /-->
+</div>
+<!-- /.box-body -->
+
+<!-- 新增窗口 -->
+<form id="addForm" method="post">
+    <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog" >
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h3 id="myModalLabel">广告新增</h3>
+                </div>
+                <div class="modal-body">
+
+                    <table class="table table-bordered table-striped"  width="800px">
+                        <tr>
+                            <td>广告分类</td>
+                            <td>
+                                <select name="contentCategory.id" class="form-control" id="contentCategory_add_select">
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>标题</td>
+                            <td><input  class="form-control" name="title" placeholder="标题" >  </td>
+                        </tr>
+                        <tr>
+                            <td>URL</td>
+                            <td><input  class="form-control" name="url" placeholder="URL" >  </td>
+                        </tr>
+                        <tr>
+                            <td>排序</td>
+                            <td><input  class="form-control" name="sort_order"  placeholder="排序" >  </td>
+                        </tr>
+                        <tr>
+                            <td>广告图片</td>
+                            <td>
+                                <table>
+                                    <tr>
+                                        <td>
+                                            <!--要上传的文件框-->
+                                            <input type="file" id="file_add" />
+                                            <!--文件上传成功之后，隐藏这个图片的服务器路径，回头新增提交到数据库中-->
+                                            <input type="hidden" name="pic" id="upload_img_add_pic"/>
+                                            <!--上传的按钮-->
+                                            <button class="btn btn-primary" type="button" onclick="uploadImg_add();">
+                                                上传
+                                            </button>
+                                        </td>
+                                        <td>
+                                            <!--回显上传成功的图片-->
+                                            <img  src="#" id="img_show_add" width="200px" height="100px">
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>是否有效</td>
+                            <td>
+                                <input type="checkbox" name="status" value="1" class="icheckbox_square-blue" >
+                            </td>
+                        </tr>
+                    </table>
+
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-success" data-dismiss="modal" aria-hidden="true" onclick="updateContent();">新增</button>
+                    <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+
+<!-- 更新窗口 -->
+<form id="updateForm" method="post">
+    <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog" >
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h3 id="myModalLabel">广告更新</h3>
+                </div>
+                <div class="modal-body">
+
+                    <table class="table table-bordered table-striped"  width="800px">
+                        <tr>
+                            <td>广告分类</td>
+                            <td>
+                                <input type="hidden" name="id" id="id_update"/>
+                                <select name="contentCategory.id" class="form-control" id="contentCategory_update_select">
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>标题</td>
+                            <td><input  class="form-control" id="title_update" name="title" placeholder="标题" >  </td>
+                        </tr>
+                        <tr>
+                            <td>URL</td>
+                            <td><input  class="form-control" id="url_update" name="url" placeholder="URL" >  </td>
+                        </tr>
+                        <tr>
+                            <td>排序</td>
+                            <td><input  class="form-control" name="sort_order" id="sort_order_update" placeholder="排序" >  </td>
+                        </tr>
+                        <tr>
+                            <td>广告图片</td>
+                            <td>
+                                <table>
+                                    <tr>
+                                        <td>
+                                            <!--要上传的文件框-->
+                                            <input type="file" id="file_update" />
+                                            <!--文件上传成功之后，隐藏这个图片的服务器路径，回头新增提交到数据库中-->
+                                            <input type="hidden" name="pic" id="upload_img_update_pic"/>
+                                            <!--上传的按钮-->
+                                            <button class="btn btn-primary" type="button" onclick="uploadImg_update();">
+                                                上传
+                                            </button>
+                                        </td>
+                                        <td>
+                                            <!--回显上传成功的图片-->
+                                            <img  src="#" id="img_show_update" width="200px" height="100px">
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>是否有效</td>
+                            <td>
+                                <input type="checkbox" name="status" id="status_update" value="1" class="icheckbox_square-blue" >
+                            </td>
+                        </tr>
+                    </table>
+
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-success" data-dismiss="modal" aria-hidden="true" onclick="updateContent();">更新</button>
+                    <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+</body>
+
+</html>

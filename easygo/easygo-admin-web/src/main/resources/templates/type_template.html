@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+
+<head>
+	<!-- 页面meta -->
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>类型模板管理</title>
+	<!-- Tell the browser to be responsive to screen width -->
+	<meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
+	<link rel="stylesheet" href="../plugins/bootstrap/css/bootstrap.min.css">
+	<link rel="stylesheet" href="../plugins/adminLTE/css/AdminLTE.css">
+	<link rel="stylesheet" href="../plugins/adminLTE/css/skins/_all-skins.min.css">
+	<link rel="stylesheet" href="../css/style.css">
+	<script src="../plugins/jQuery/jquery-2.2.3.min.js"></script>
+	<script src="../plugins/bootstrap/js/bootstrap.min.js"></script>
+	<link rel="stylesheet" href="../plugins/select2/select2.css"/>
+	<link rel="stylesheet" href="../plugins/select2/select2-bootstrap.css"/>
+	<script src="../plugins/select2/select2.min.js" type="text/javascript"></script>
+	<script type="text/javascript">
+
+		//跳转页面
+		function goPage(pageIndex, pageSize) {
+			//搜索表单,动态修改action属性
+			$("#searchForm").prop("action", "typeTemplate_page?pageIndex=" + pageIndex + "&pageSize=" + pageSize);
+			//当表单提交，那么表单中的参数也会一起提交
+			$("#searchForm").submit();
+		}
+
+		//新增时 异步绑定界面回显的数据
+		function getBrandsAndspecifications() {
+			$.getJSON("typeTemplate_getBrandsAndspecifications", function (result) {
+				var brands = result.brands;
+				$("#brands_add").text(""); //置空
+				for (var i = 0; i < brands.length; i++) {
+					//绑定品牌数据
+					if ((i + 1) % 6 == 0) {
+						$("#brands_add").append("<input type=\"checkbox\" name=\"brandIds\" value=\"" + brands[i].id + "\"/>&nbsp;" + brands[i].name + "<br/>");
+					} else {
+						$("#brands_add").append("<input type=\"checkbox\" name=\"brandIds\" value=\"" + brands[i].id + "\"/>&nbsp;" + brands[i].name + "&nbsp;&nbsp;");
+					}
+				}
+				//加载规格specs_add
+
+				var specifications = result.specifications;
+				$("#specs_add").text(""); //置空
+				for (var i = 0; i < specifications.length; i++) {
+					//绑定品牌数据
+					if ((i + 1) % 6 == 0) {
+						$("#specs_add").append("<input type=\"checkbox\" name=\"specIds\" value=\"" + specifications[i].id + "\"/>&nbsp;" + specifications[i].spec_name + "<br/>");
+					} else {
+						$("#specs_add").append("<input type=\"checkbox\" name=\"specIds\" value=\"" + specifications[i].id + "\"/>&nbsp;" + specifications[i].spec_name + "&nbsp;&nbsp;");
+					}
+				}
+			});
+		}
+
+		//添加时 新增扩展属性行
+		function add_custom_attribute_items_add() {
+			$("#tbody_custom_attribute_items").append(" <tr><td><input class=\"form-control\" name=\"attribute_items\" placeholder=\"属性名称\" ></td><td><button type=\"button\" class=\"btn btn-default\" title=\"删除\" onclick=\"add_custom_attribute_items_delete(this);\"><i class=\"fa fa-trash-o\"></i> 删除</button></td></tr>");
+		}
+
+		//新增时 删除所在的行
+		function add_custom_attribute_items_delete(btn) {
+			if ($("#tbody_custom_attribute_items").find("tr").length > 1) {
+				$(btn).parent().parent().remove();
+			} else {
+				alert("不能再删除啦，小弟,至少有一个扩展属性!")
+			}
+		}
+
+		//新增模板表单
+		function addTypeTemplate() {
+			var data = $("#addForm").serialize();
+			$.ajax({
+				url: "typeTemplate_add",
+				data: data,
+				type: "post",
+				dataType: "json",
+				success: function (result) {
+					//alert(JSON.stringify(result));
+					if (result.code == 200) {
+						alert(result.message);
+						location.href = "typeTemplate_page";
+					} else {
+						alert(result.message);
+					}
+				}
+			});
+		}
+
+		//更新页面数据回显
+		function goUpdate(id) {
+			$.getJSON("typeTemplate_goUpdate", {"id": id}, function (result) {
+				//alert(JSON.stringify(result));
+				//回显数据
+				var typeTemplate = result.typeTemplate;
+				$("#id_update").val(typeTemplate.id);
+				$("#name_update").val(typeTemplate.name);
+
+				//品牌
+				var brands = result.brands;
+				$("#brands_update").text(""); //置空
+				for (var i = 0; i < brands.length; i++) {
+					//绑定品牌数据
+					if ((i + 1) % 6 == 0) {
+						if (brands[i].flag == true) {
+							$("#brands_update").append("<input type=\"checkbox\" checked name=\"brandIds\" value=\"" + brands[i].id + "\"/>&nbsp;" + brands[i].name + "<br/>");
+						} else {
+							$("#brands_update").append("<input type=\"checkbox\" name=\"brandIds\" value=\"" + brands[i].id + "\"/>&nbsp;" + brands[i].name + "<br/>");
+						}
+					} else {
+						if (brands[i].flag == true) {
+							$("#brands_update").append("<input type=\"checkbox\" checked name=\"brandIds\" value=\"" + brands[i].id + "\"/>&nbsp;" + brands[i].name + "&nbsp;&nbsp;");
+						} else {
+							$("#brands_update").append("<input type=\"checkbox\" name=\"brandIds\" value=\"" + brands[i].id + "\"/>&nbsp;" + brands[i].name + "&nbsp;&nbsp;");
+						}
+					}
+				}
+				//规格
+				var specifications = result.specifications;
+				$("#specs_update").text(""); //置空
+				for (var i = 0; i < specifications.length; i++) {
+					//绑定品牌数据
+					if ((i + 1) % 6 == 0) {
+						if (specifications[i].flag == true) {
+							$("#specs_update").append("<input type=\"checkbox\" checked name=\"specIds\" value=\"" + specifications[i].id + "\"/>&nbsp;" + specifications[i].spec_name + "<br/>");
+						} else {
+							$("#specs_update").append("<input type=\"checkbox\" name=\"specIds\" value=\"" + specifications[i].id + "\"/>&nbsp;" + specifications[i].spec_name + "<br/>");
+						}
+					} else {
+						if (specifications[i].flag == true) {
+							$("#specs_update").append("<input type=\"checkbox\" checked name=\"specIds\" value=\"" + specifications[i].id + "\"/>&nbsp;" + specifications[i].spec_name + "&nbsp;&nbsp;");
+						} else {
+							$("#specs_update").append("<input type=\"checkbox\" name=\"specIds\" value=\"" + specifications[i].id + "\"/>&nbsp;" + specifications[i].spec_name + "&nbsp;&nbsp;");
+						}
+					}
+				}
+				//扩展属性
+				var attribute_items_beans = result.attribute_items_beans;
+				$("#tbody_custom_attribute_items_update").text(""); //置空
+				for (var i = 0; i < attribute_items_beans.length; i++) {
+					$("#tbody_custom_attribute_items_update").append("<tr><td><input class=\"form-control\" name=\"attribute_items\" value=\"" + attribute_items_beans[i].text + "\" placeholder=\"属性名称\" ></td><td><button type=\"button\" class=\"btn btn-default\" title=\"删除\" onclick=\"update_custom_attribute_items_delete(this);\"><i class=\"fa fa-trash-o\"></i> 删除</button></td></tr>");
+				}
+			});
+		}
+	</script>
+</head>
+
+<body class="hold-transition skin-red sidebar-mini">
+<!-- .box-body -->
+
+<div class="box-header with-border">
+	<h3 class="box-title">商品类型模板管理</h3>
+</div>
+
+<div class="box-body">
+
+	<!-- 数据表格 -->
+	<div class="table-box">
+		<!--工具栏-->
+		<div class="pull-left">
+			<div class="form-group form-inline">
+				<div class="btn-group">
+					<button type="button" class="btn btn-default" title="新建" data-toggle="modal"
+							onclick="getBrandsAndspecifications();" data-target="#addModal"><i class="fa fa-file-o"></i>
+						新建
+					</button>
+					<button type="button" class="btn btn-default" title="删除"><i class="fa fa-trash-o"></i> 删除</button>
+
+					<button type="button" class="btn btn-default" title="刷新" onclick="window.location.reload();"><i
+							class="fa fa-refresh"></i> 刷新
+					</button>
+				</div>
+			</div>
+		</div>
+		<form id="searchForm" action="typeTemplate_page?pageIndex=1&pageSize=5" method="post">
+			<div class="box-tools pull-right">
+				<div class="has-feedback">
+					分类模板名称：<input name="name" th:value="${name}"/>
+					<button class="btn btn-default" type="submit">查询</button>
+				</div>
+			</div>
+		</form>
+		<!--工具栏/-->
+
+		<!--数据列表-->
+		<table id="dataList" class="table table-bordered table-striped table-hover dataTable">
+			<thead>
+			<tr>
+				<th class="" style="padding-right:0px">
+					<input id="selall" type="checkbox" class="icheckbox_square-blue">
+				</th>
+				<th class="sorting_asc">模板ID</th>
+				<th class="sorting">分类模板名称</th>
+				<th class="sorting">关联品牌</th>
+				<th class="sorting">关联规格</th>
+				<th class="sorting">扩展属性</th>
+				<th class="text-center">操作</th>
+			</tr>
+			</thead>
+			<tbody>
+			<tr th:each="typeTemplate:${pageUtils.records}">
+				<td><input type="checkbox"></td>
+				<td th:text="${typeTemplate.id}">1</td>
+				<td th:text="${typeTemplate.name}">手机</td>
+				<td th:text="${typeTemplate.brand_ids}">联想,华为,中兴</td>
+				<td th:text="${typeTemplate.spec_ids}">网络制式</td>
+				<td th:text="${typeTemplate.custom_attribute_items}"></td>
+				<td class="text-center">
+					<button type="button" class="btn bg-olive btn-xs" data-toggle="modal" data-target="#editModal"
+							th:onclick="|goUpdate(${typeTemplate.id});|">修改
+					</button>
+				</td>
+			</tr>
+			</tbody>
+		</table>
+		<!--数据列表/-->
+		<!-- 分页组件 -->
+		<div class="row">
+			<div class="col-sm-6">
+				<div class="dataTables_paginate paging_bootstrap" id="sample-table_paginate">
+					<ul class="pagination">
+						<li class="prev"><a th:href="|javascript:goPage(1,${pageUtils.pageSize});|">首页</a></li>
+						<!--<li class="prev" th:if="${pageUtils.pageIndex>1}"><a th:href="|brand_page?pageIndex=${pageUtils.pageIndex-1}&pageSize=${pageUtils.pageSize}|">上一页</a></li>-->
+
+						<li class="next" th:each="num:${pageUtils.numbers}"
+							th:class="${pageUtils.pageIndex==num}? active"><a
+								th:href="|javascript:goPage(${num},${pageUtils.pageSize});|" th:text="${num}">XXX</a>
+						</li>
+
+						<!--	<li class="next" th:if="${pageUtils.pageIndex<pageUtils.pageCount}"><a th:href="|brand_page?pageIndex=${pageUtils.pageIndex+1}&pageSize=${pageUtils.pageSize}|">下一页</a></li>-->
+						<li class="next"><a
+								th:href="|javascript:goPage(${pageUtils.pageCount},${pageUtils.pageSize});|">尾页</a></li>
+						<li class="next"><a href="#" th:text="|当前${pageUtils.pageIndex}/${pageUtils.pageCount}页|"></a>
+						</li>
+						<li class="next"><a href="#" th:text="|共${pageUtils.totalCount}条|">XXX</a></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<!-- 分页组件 -->
+
+	</div>
+	<!-- 数据表格 /-->
+
+
+</div>
+<!-- /.box-body -->
+
+
+<!-- 编辑窗口 -->
+<form action="#" id="updateForm" method="post">
+	<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+		 aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+					<h3 id="myModalLabel">商品类型模板编辑</h3>
+				</div>
+				<div class="modal-body">
+
+					<table class="table table-bordered table-striped" width="800px">
+						<tr>
+							<td>商品类型模板</td>
+							<td>
+								<input type="hidden" name="id" id="id_update"/>
+								<input name="name" id="name_update" class="form-control" placeholder="商品类型模板"></td>
+						</tr>
+						<tr>
+							<td>关联品牌</td>
+							<td id="brands_update">
+
+							</td>
+						</tr>
+						<tr>
+							<td>关联规格</td>
+							<td id="specs_update">
+
+							</td>
+						</tr>
+
+						<tr>
+							<td>扩展属性</td>
+							<td>
+								<div class="btn-group">
+									<button type="button" class="btn btn-default" title="新增扩展属性"
+											onclick="add_custom_attribute_items_add();"><i class="fa fa-file-o"></i>
+										新增扩展属性
+									</button>
+								</div>
+								<table class="table table-bordered table-striped" width="800px">
+									<thead>
+									<tr>
+										<td>属性名称</td>
+										<td>操作</td>
+									</tr>
+									</thead>
+									<tbody id="tbody_custom_attribute_items_update">
+									<!--  <tr>
+                                          <td><input class="form-control" name="attribute_items" placeholder="属性名称" ></td>
+                                          <td><button type="button" class="btn btn-default" title="删除" onclick="add_custom_attribute_items_delete(this);"><i class="fa fa-trash-o"></i> 删除</button></td>
+                                      </tr>
+                                      <tr>
+                                          <td><input class="form-control" name="attribute_items" placeholder="属性名称" ></td>
+                                          <td><button type="button" class="btn btn-default" title="删除" onclick="add_custom_attribute_items_delete(this);"><i class="fa fa-trash-o"></i> 删除</button></td>
+                                      </tr>-->
+									</tbody>
+								</table>
+
+							</td>
+						</tr>
+
+					</table>
+
+				</div>
+				<div class="modal-footer">
+					<button class="btn btn-success" data-dismiss="modal" aria-hidden="true"
+							onclick="addTypeTemplate();">更新
+					</button>
+					<button class="btn btn-default" data-dismiss="modal" aria-hidden="true">关闭</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</form>
+
+
+<!-- 新增窗口 -->
+<form action="#" id="addForm" method="post">
+	<div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+					<h3 id="myModalLabel">商品类型模板新增</h3>
+				</div>
+				<div class="modal-body">
+
+					<table class="table table-bordered table-striped" width="800px">
+						<tr>
+							<td>商品类型模板</td>
+							<td><input name="name" class="form-control" placeholder="商品类型模板"></td>
+						</tr>
+						<tr>
+							<td>关联品牌</td>
+							<td id="brands_add">
+
+							</td>
+						</tr>
+						<tr>
+							<td>关联规格</td>
+							<td id="specs_add">
+
+							</td>
+						</tr>
+
+						<tr>
+							<td>扩展属性</td>
+							<td>
+								<div class="btn-group">
+									<button type="button" class="btn btn-default" title="新增扩展属性"
+											onclick="add_custom_attribute_items_add();"><i class="fa fa-file-o"></i>
+										新增扩展属性
+									</button>
+								</div>
+								<table class="table table-bordered table-striped" width="800px">
+									<thead>
+									<tr>
+										<td>属性名称</td>
+										<td>操作</td>
+									</tr>
+									</thead>
+									<tbody id="tbody_custom_attribute_items">
+									<tr>
+										<td><input class="form-control" name="attribute_items" placeholder="属性名称"></td>
+										<td>
+											<button type="button" class="btn btn-default" title="删除"
+													onclick="add_custom_attribute_items_delete(this);"><i
+													class="fa fa-trash-o"></i> 删除
+											</button>
+										</td>
+									</tr>
+									<tr>
+										<td><input class="form-control" name="attribute_items" placeholder="属性名称"></td>
+										<td>
+											<button type="button" class="btn btn-default" title="删除"
+													onclick="add_custom_attribute_items_delete(this);"><i
+													class="fa fa-trash-o"></i> 删除
+											</button>
+										</td>
+									</tr>
+									</tbody>
+								</table>
+
+							</td>
+						</tr>
+
+					</table>
+
+				</div>
+				<div class="modal-footer">
+					<button class="btn btn-success" data-dismiss="modal" aria-hidden="true"
+							onclick="addTypeTemplate();">新增
+					</button>
+					<button class="btn btn-default" data-dismiss="modal" aria-hidden="true">关闭</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</form>
+</body>
+
+</html>

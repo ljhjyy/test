@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.easygo.mapper.OrderMapper">
+
+    <!--新增订单 此处的order_id 是通过程序生成的唯一ID 不是数据库自增字段 -->
+    <insert id="addOrder">
+       insert into tb_order(order_id,user_id,payment_type,status,create_time,update_time,receiver_area_name,receiver_mobile,receiver,source_type,payment)
+       values (#{order_id},#{user_id},#{payment_type},#{status},#{create_time},#{update_time},#{receiver_area_name},#{receiver_mobile},#{receiver},#{source_type},#{payment})
+    </insert>
+
+    <!--新增详情-->
+    <insert id="addOrderItem">
+        insert into tb_order_item(id,item_id,goods_id,order_id,title,price,num,total_fee,pic_path,seller_id)
+        values (null,#{item_id},#{goods_id},#{order_id},#{title},#{price},#{num},#{total_fee},#{pic_path},#{seller_id})
+    </insert>
+
+</mapper>

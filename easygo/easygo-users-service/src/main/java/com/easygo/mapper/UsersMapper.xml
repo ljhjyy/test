@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.easygo.mapper.UsersMapper">
+
+    <insert id="registerUsers">
+         insert into tb_user (username,password,phone,email,nick_name,status,qq,sex,del,created,updated)
+         values (#{username},#{password},#{phone},#{email},#{nick_name},1,#{qq},#{sex},0,now(),now())
+    </insert>
+
+</mapper>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.easygo.mapper.ItemCatMapper">
+
+    <select id="getTotalCount" resultType="int">
+          select count(1) from tb_item_cat where del=0 and parent_id=#{parent_id}
+    </select>
+
+    <select id="getItemCatsByPage" resultMap="ItemCatMap">
+        select A.*,B.`name` as 'typename' from tb_item_cat A inner join tb_type_template B
+        on A.type_id=B.id and A.del=0 and A.parent_id=#{parent_id} order by A.id desc limit #{pageStart},#{pageSize}
+    </select>
+
+    <resultMap id="ItemCatMap" type="com.easygo.pojo.ItemCat">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="parent_id" property="parent_id"/>
+        <result column="del" property="del"/>
+        <!--多对一-->
+        <association property="typeTemplate" javaType="com.easygo.pojo.TypeTemplate">
+            <id column="type_id" property="id"/>
+            <result column="typename" property="name"/>
+        </association>
+    </resultMap>
+
+    <select id="getItemCatById" resultMap="ItemCatMap">
+       select A.*,B.`name` as 'typename' from tb_item_cat A inner join tb_type_template B
+       on A.type_id=B.id and A.del=0 and A.id=#{id}
+    </select>
+
+    <select id="getItemCats" resultType="com.easygo.pojo.ItemCat">
+       select * from tb_item_cat where del=0
+    </select>
+
+    <insert id="addItemCat">
+      insert into tb_item_cat values (null,#{parent_id},#{name},#{typeTemplate.id},0)
+    </insert>
+
+</mapper>

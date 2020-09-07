@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.bruce.easygo</groupId>
+    <artifactId>easygo</artifactId>
+    <packaging>pom</packaging>
+    <version>1.0-SNAPSHOT</version>
+    <modules>
+        <module>easygo-brand-service</module>
+        <module>easygo-pojo</module>
+        <module>easygo-eureka</module>
+        <module>easygo-admin-web</module>
+        <module>easygo-commons</module>
+        <module>easygo-admin-service</module>
+        <module>easygo-ad-service</module>
+        <module>easygo-protal-web</module>
+        <module>easygo-specification-service</module>
+        <module>easygo-typetemplate-service</module>
+        <module>easygo-itemcat-service</module>
+        <module>easygo-search-service</module>
+        <module>easygo-goods-service</module>
+        <module>easygo-staticpage-service</module>
+        <module>easygo-users-service</module>
+        <module>easygo-address-service</module>
+        <module>easygo-order-service</module>
+        <module>easygo-pay-service</module>
+    </modules>
+
+    <properties>
+        <java.version>1.8</java.version>
+        <!--spring-cloud版本 但是如果第一次使用的，Maven会下载一下-->
+        <!--<spring-cloud.version>Greenwich.SR1</spring-cloud.version>-->
+        <spring-cloud.version>Edgware.SR3</spring-cloud.version>
+        <!--lcn的版本,统一定义版本号 注意SpringBoot的版本需要匹配 1.5.4.RELEASE-->
+        <lcn.last.version>4.1.0</lcn.last.version>
+    </properties>
+
+    <!--导入SpringBoot的依赖-->
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <!--<version>2.1.4.RELEASE</version>-->
+        <version>1.5.4.RELEASE</version>
+        <relativePath/>
+    </parent>
+
+    <build>
+        <plugins>
+            <!--SpringBoot打包插件  jar  java -jar jar包-->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
